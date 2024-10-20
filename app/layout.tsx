@@ -1,6 +1,20 @@
-import type { Metadata } from "next"
+import type { Metadata } from "next";
+import localFont from "next/font/local";
 
-const metadata:Metadata = {
+const geistMono = localFont({
+  src:"./fonts/GeistMonoVF.woff",
+  variable:"--font-geist-mono",
+  weight:"100 900"
+});
+
+const geistSans = localFont({
+  src:"./fonts/GeistVF.woff",
+  preload:true,
+  variable:"--font-geist-sans",
+  weight:"100 900"
+})
+
+export const metadata:Metadata = {
   title:"News App",
   description: "this is app for latest news"
 }
@@ -9,7 +23,7 @@ export default function RootLayout({children,}:Readonly<{children:React.ReactNod
     return (
       <html>
         <body>
-          <div>{children}</div>
+          <div className={`${geistMono.variable} ${geistSans.variable}, antialiased`}>{children}</div>
         </body>
       </html>
     )
