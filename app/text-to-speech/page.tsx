@@ -20,8 +20,12 @@ function TEXT_TO_SPEEACH() {
     gender?:string,
     use_case?:string,
   }
+
+  interface FormData{
+    userText:string
+  }
   
-  const {control,register,handleSubmit} = useForm();
+  const {control,handleSubmit} = useForm<FormData>();
   const [voices,setVoices] = useState<Voice[]>([]);
 
   useEffect(()=>{
@@ -34,7 +38,7 @@ function TEXT_TO_SPEEACH() {
     elevenlabsVoices();
   },[]);
 
-  const formSubmission = async(data:any)=>{
+  const formSubmission = async(data:FormData)=>{
       console.log(data);
 
       await fetch("/text-to-speech/api",{method:"GET"})

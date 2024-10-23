@@ -2,9 +2,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { ElevenLabsClient, ElevenLabs } from "elevenlabs";
 
-export async function GET(NextRequest:NextRequest){
+export async function GET(req:NextRequest){
 
-    console.log("Yes working");
+    console.log("Yes working",req.url);
     
     const client = new ElevenLabsClient({apiKey:process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY});
 
