@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import {Controller,useForm} from "react-hook-form";
 import {Button} from "../(components)/index.js";
-import {SentanceCase} from "../../utils/utils.js"
+import {SentanceCase} from "../../utils/utils.js";
 
 function TEXT_TO_SPEEACH() {
   interface Voice {
@@ -27,6 +27,7 @@ function TEXT_TO_SPEEACH() {
   
   const {control,handleSubmit} = useForm<FormData>();
   const [voices,setVoices] = useState<Voice[]>([]);
+  const [audioUrl,setAudioUrl] = useState<string>()
 
   useEffect(()=>{
     const elevenlabsVoices = async()=>{
@@ -41,7 +42,34 @@ function TEXT_TO_SPEEACH() {
   const formSubmission = async(data:FormData)=>{
       console.log(data);
 
-      await fetch("/text-to-speech/api",{method:"GET"})
+      const textToSpeech = {
+        data : data.userText
+      }
+      
+      const responseAudio = await fetch("/text-to-speech/api",
+        {
+          method:"POST",
+          body: JSON.stringify(textToSpeech)
+        });
+
+      const reader = responseAudio.body?.getReader();
+
+      const chunks = [];
+      while(true){
+        const {done,value} = await reader?.read();
+        // console.log(value);
+        
+        if (done) {
+          break;
+        }
+        chunks.push(value)
+      }
+
+      const audioBuffer = new Blob(chunks,{type:'audio/mpeg'});
+      const audioUrl = URL.createObjectURL(audioBuffer);
+
+      console.log(audioUrl);
+      setAudioUrl(audioUrl);
 
   }
 
@@ -69,6 +97,9 @@ console.log(voices);
                   <Button className={"px-7 py-3 rounded-md shadow-sm bg-gray-300 hover:bg-gray-500 font-semibold hover:text-white"} text="Submit"/>
                 </div>
               </form>
+              <div className='mt-4 flex justify-center'>
+                <audio controls={true} src={audioUrl}></audio>
+              </div>
             </div>
 
             {/* voices sample */}
