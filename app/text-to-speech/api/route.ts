@@ -3,45 +3,52 @@ import { NextResponse } from "next/server";
 
 
 export async function POST(req:NextRequest){
-  const body = await req.json();
-  const {data:userText} = body;
-
-    const voiceId = "9BWtsMINqrJLrRacOk9x"
-    console.log("Yes working",req.url);
-
-    const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`
-    
-    const headers = {
-        "Accept":"audio/mpeg",
-        "xi-api-key": `${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY}`,
-        "Content-Type":"application/json"
-    }
-
-    const data = {
-        text:userText,
-        model_id:"eleven_monolingual_v1",
-        voice_settings:{
-          similarity_boost:0.3,
-          stability:0.1,
-          style:0.2
-        }
-      }
-
-      const responseAudio = await fetch(url,{
-        method:"POST",
-        headers: headers,
-        body: JSON.stringify(data)
-      })
-
-      // console.log(responseAudio);
-
-      const reader = responseAudio.body
+  try {
+    const body = await req.json();
+    const {data:userText,voiceId} = body;
+  
+      // const voiceId = "9BWtsMINqrJLrRacOk9x"
+      console.log("Yes working",req.url);
+  
+      const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`
       
-      return new NextResponse(reader,{
-        headers:{
-            'Content-Type':'audio/mpeg'
+      const headers = {
+          "Accept":"audio/mpeg",
+          "xi-api-key": `${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY}`,
+          "Content-Type":"application/json"
+      }
+  
+      const data = {
+          text:userText,
+          model_id:"eleven_monolingual_v1",
+          voice_settings:{
+            similarity_boost:0.3,
+            stability:0.1,
+            style:0.2
+          }
         }
-      })
+  
+        const responseAudio = await fetch(url,{
+          method:"POST",
+          headers: headers,
+          body: JSON.stringify(data)
+        })
+  
+        // console.log(responseAudio);
+  
+        const reader = responseAudio.body
+        
+        return new NextResponse(reader,{
+          headers:{
+              'Content-Type':'audio/mpeg'
+          }
+        })
+  } catch (error) {
+    NextResponse.json({
+      status:500,
+      message:"Error from the server side"
+    })
+  }
 }
 
 

@@ -22,12 +22,15 @@ function TEXT_TO_SPEEACH() {
   }
 
   interface FormData{
-    userText:string
+    userText:string,
+    voiceId:string
   }
   
-  const {control,handleSubmit} = useForm<FormData>();
+  const {control,handleSubmit,register,watch} = useForm<FormData>();
   const [voices,setVoices] = useState<Voice[]>([]);
-  const [audioUrl,setAudioUrl] = useState<string>()
+  const [audioUrl,setAudioUrl] = useState<string>();
+  const [spin, setSpin] = useState<boolean>(false);
+  const [speaker, setSpeaker] = useState<string>('Aria');
 
   useEffect(()=>{
     const elevenlabsVoices = async()=>{
@@ -40,42 +43,53 @@ function TEXT_TO_SPEEACH() {
   },[]);
 
   const formSubmission = async(data:FormData)=>{
-      console.log(data);
-
-      const textToSpeech = {
-        data : data.userText
-      }
-
-      const responseAudio = await fetch("/text-to-speech/api",
-        {
-          method:"POST",
-          body: JSON.stringify(textToSpeech)
-        });
-
-      const reader = responseAudio.body?.getReader();
-
-      const chunks = [];
-      if (reader) {
-        while(true){
-          const {done,value} = await reader.read();
-          // console.log(value);
-          
-          if (done) {
-            break;
-          }
-          chunks.push(value)
+      try {
+        console.log(data);
+      
+        const textToSpeech = {
+          data : data.userText
         }
-      }else{
-        console.log("Reader is undifined not data fetched ");
+  
+        setSpin(true)
+        const responseAudio = await fetch("/text-to-speech/api",
+          {
+            method:"POST",
+            body: JSON.stringify(textToSpeech)
+          });
+  
+        const reader = responseAudio.body?.getReader();
+  
+        const chunks = [];
+        if (reader) {
+          while(true){
+            const {done,value} = await reader.read();
+            // console.log(value);
+            
+            if (done) {
+              break;
+            }
+            chunks.push(value)
+          }
+        }else{
+          console.log("Reader is undifined not data fetched ");
+        }
+  
+        const audioBuffer = new Blob(chunks,{type:'audio/mpeg'});
+        const audioUrl = URL.createObjectURL(audioBuffer);
+        setSpin(false)
+        console.log(audioUrl);
+        setAudioUrl(audioUrl);
+
+      } catch (error) {
+        console.log("Happen Some Errors",error);
+        setSpin(false)
       }
-
-      const audioBuffer = new Blob(chunks,{type:'audio/mpeg'});
-      const audioUrl = URL.createObjectURL(audioBuffer);
-
-      console.log(audioUrl);
-      setAudioUrl(audioUrl);
 
   }
+
+  // const watching = watch();
+  // console.log(watching.voiceId);
+  
 
 console.log(voices);
 
@@ -83,8 +97,8 @@ console.log(voices);
   return (
     <div>
         <div>
-            <div className='lg:w-[60%] mx-auto p-4'>
               <form onSubmit={handleSubmit(formSubmission)}>
+            <div className='lg:w-[60%] mx-auto p-4'>
                 <Controller
                 name='userText'
                 control={control}
@@ -92,26 +106,33 @@ console.log(voices);
                 rules={{required:"This is required"}}
                 render={({field,fieldState:{error}})=>
                    <div>
-                    <textarea {...field} className='w-full h-32 bg-gray-200 resize-none p-4 rounded-md shadow-sm focus:outline-2 focus:outline-blue-400' placeholder='Enter your text to speech...'></textarea>
+                    <textarea {...field} className='w-full h-32 bg-gray-200 resize-none p-4 rounded-md shadow-sm focus:outline-2 focus:outline-blue-400 overflow-y-auto scrollbar' placeholder='Enter your text to speech...'></textarea>
                     {error && (<span className='text-pink-400 font-bold'>{error.message}</span>)}
                    </div>
                 }
                 />
-                <div className='flex justify-center'>
-                  <Button className={"px-7 py-3 rounded-md shadow-sm bg-gray-300 hover:bg-gray-500 font-semibold hover:text-white"} text="Submit"/>
+                <div>
+                  <p><span className='font-bold'>Speaker:- </span><span className='font-semibold'>{speaker}</span></p>
                 </div>
-              </form>
+                <div className='flex justify-center'>
+                  <Button spin={spin} className={"px-7 py-3 rounded-md shadow-sm bg-gray-300 hover:bg-gray-500 font-semibold hover:text-white"} text="Submit"/>
+                </div>
+             
               <div className='mt-4 flex justify-center'>
-                <audio controls={true} src={audioUrl}></audio>
+                {audioUrl? (<> <audio controls={true} src={audioUrl}></audio></>):(<></>)}
+               
               </div>
             </div>
 
             {/* voices sample */}
-            <div>
-              <div className='mx-auto lg:w-[65%] flex gap-4 flex-wrap justify-center'>
+            <div className='h-[444px] lg:h-[556px] overflow-y-auto scrollbar'>
+              <div className='mx-auto lg:w-[65%] flex gap-4 flex-wrap justify-center p-1'>
                 {voices.length>0 ? voices.map((voice)=>(
                   <div key={voice.voice_id} className='max-[300px]:w-full w-[300px] flex flex-col justify-between'>
+                    <div className='flex flex-wrap justify-between'>
                     <h1 className='font-bold'>{voice.name}</h1>
+                    <input className='' type="radio" {...register("voiceId",{required:"This is required"})} value={voice.voice_id} onChange={()=>setSpeaker(voice.name)}/>
+                    </div>
                     <div className=' flex-1 flex flex-col justify-between'>
                       <div className='flex gap-2 font-semibold flex-wrap my-2'>
                         <span className='tags'>{`${SentanceCase(voice.labels?.accent)} Styles`}</span>
@@ -126,6 +147,7 @@ console.log(voices);
                 )): <></>}
               </div>
             </div>
+            </form>
         </div>
     </div>
   )

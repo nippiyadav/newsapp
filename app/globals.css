@@ -6,4 +6,16 @@
     .tags{
         @apply rounded-full bg-gray-300 px-4 py-2 hover:bg-gray-400 cursor-pointer
     }
+    .scrollbar::-webkit-scrollbar{
+        width: 8px;
+    }
+    .scrollbar::-webkit-scrollbar-thumb{
+        background: #d1cfcf; /* Color of the scrollbar handle */
+        border-radius: 4px;
+    }
+    .scrollbar::-webkit-scrollbar-track {
+        background: #b8b7b7; /* Color of the track */
+        width: 8px;
+      }
+    
 }
