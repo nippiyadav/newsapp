@@ -45,7 +45,7 @@ function TEXT_TO_SPEEACH() {
       const textToSpeech = {
         data : data.userText
       }
-      
+
       const responseAudio = await fetch("/text-to-speech/api",
         {
           method:"POST",
@@ -54,15 +54,19 @@ function TEXT_TO_SPEEACH() {
 
       const reader = responseAudio.body?.getReader();
 
-      const chunks = [];
-      while(true){
-        const {done,value} = await reader?.read();
-        // console.log(value);
-        
-        if (done) {
-          break;
+      let chunks = [];
+      if (reader) {
+        while(true){
+          const {done,value} = await reader.read();
+          // console.log(value);
+          
+          if (done) {
+            break;
+          }
+          chunks.push(value)
         }
-        chunks.push(value)
+      }else{
+        console.log("Reader is undifined not data fetched ");
       }
 
       const audioBuffer = new Blob(chunks,{type:'audio/mpeg'});
