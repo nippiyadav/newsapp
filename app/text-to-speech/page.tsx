@@ -3,29 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import {Controller,useForm} from "react-hook-form";
 import {Button} from "../(components)/index.js";
-import {SentanceCase} from "../../utils/utils.js";
+import {SentanceCase} from "../../utils/utils.js"
 
 function TEXT_TO_SPEEACH() {
-  interface Voice {
-    voice_id:string,
-    name:string,
-    preview_url:string,
-    labels?:Labels
-  }
-
-  interface Labels{
-    accent?:string,
-    age?:string,
-    description?:string,
-    gender?:string,
-    use_case?:string,
-  }
-
-  interface FormData{
-    userText:string,
-    voiceId:string
-  }
-  
   const {control,handleSubmit,register} = useForm<FormData>();
   const [voices,setVoices] = useState<Voice[]>([]);
   const [audioUrl,setAudioUrl] = useState<string>();
@@ -47,7 +27,8 @@ function TEXT_TO_SPEEACH() {
         console.log(data);
       
         const textToSpeech = {
-          data : data.userText
+          data : data.userText,
+          voiceId: data.voiceId
         }
   
         setSpin(true)

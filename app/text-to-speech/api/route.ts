@@ -6,7 +6,8 @@ export async function POST(req:NextRequest){
   try {
     const body = await req.json();
     const {data:userText,voiceId} = body;
-  
+    console.log(userText,voiceId);
+    
       // const voiceId = "9BWtsMINqrJLrRacOk9x"
       console.log("Yes working",req.url);
   

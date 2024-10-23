@@ -15,7 +15,6 @@ export function SentanceCase(text){
     // console.log(textString);
     return textString;
     
-    
 }
 
 // SentanceCase("middle-rain-down")
