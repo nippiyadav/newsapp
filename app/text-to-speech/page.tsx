@@ -54,7 +54,7 @@ function TEXT_TO_SPEEACH() {
 
       const reader = responseAudio.body?.getReader();
 
-      let chunks = [];
+      const chunks = [];
       if (reader) {
         while(true){
           const {done,value} = await reader.read();
