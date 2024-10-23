@@ -44,6 +44,8 @@ export async function POST(req:NextRequest){
           }
         })
   } catch (error) {
+    console.log("Error",error);
+    
     NextResponse.json({
       status:500,
       message:"Error from the server side"

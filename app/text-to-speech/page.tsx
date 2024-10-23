@@ -26,7 +26,7 @@ function TEXT_TO_SPEEACH() {
     voiceId:string
   }
   
-  const {control,handleSubmit,register,watch} = useForm<FormData>();
+  const {control,handleSubmit,register} = useForm<FormData>();
   const [voices,setVoices] = useState<Voice[]>([]);
   const [audioUrl,setAudioUrl] = useState<string>();
   const [spin, setSpin] = useState<boolean>(false);
