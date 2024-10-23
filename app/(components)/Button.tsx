@@ -3,7 +3,7 @@ import React from 'react'
 interface ButtonProps{
   type?: "submit" | "reset" | "button",
   text:string,
-  className: any
+  className: string
 }
 
 function Button({type="submit",text,className}:ButtonProps) {
