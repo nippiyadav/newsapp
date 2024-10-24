@@ -41,7 +41,7 @@ function TEXT_TO_SPEEACH() {
                 headers: { 'Content-Type': 'application/json', 'xi-api-key': `${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY}` },
                 body: JSON.stringify(datai)
             };
-
+            setSpin(true)
             fetch('https://api.elevenlabs.io/v1/voice-generation/generate-voice', options)
                 .then(async (response) => {
                     console.log(response)
@@ -64,9 +64,12 @@ function TEXT_TO_SPEEACH() {
                     const blobAudioUrl = URL.createObjectURL(blob);
 
                     setAudioUrl(blobAudioUrl)
-
+                    setSpin(false)
                 })
-                .catch((err) => console.error(err));
+                .catch((err) =>{
+                    setSpin(false)
+                     console.error(err)
+                    });
 
         } catch (error) {
             console.log("Happen Some Errors", error);
@@ -105,8 +108,8 @@ function TEXT_TO_SPEEACH() {
                                     <label className='flex gap-4 justify-between '>
                                         <span className='font-bold'>Choose:-</span>
                                         <select
-                                        className='w-1/2'
-                                        defaultValue={"male"}
+                                        className='w-1/2 flex-1'
+                                        defaultValue={"#"}
                                         {...register("gender",{required:"This is required"})} id="">
                                             <option value="#">Gender</option>
                                             <option value="male">Male</option>
@@ -117,8 +120,8 @@ function TEXT_TO_SPEEACH() {
                                 <span className='chooseStyle'>
                                     <label className='flex gap-4 justify-between '>
                                     <span className='font-bold'>Choose:-</span>
-                                        <select className='w-1/2'
-                                        defaultValue={"american"}
+                                        <select className='w-1/2 flex-1'
+                                        defaultValue={"#"}
                                         {...register("country",{required:"This is required"})}>
                                             <option value="#">Country</option>
                                             <option value="american">American</option>
@@ -132,8 +135,8 @@ function TEXT_TO_SPEEACH() {
                                 <span className='chooseStyle'>
                                     <label className='flex gap-4 justify-between '>
                                     <span className='font-bold'>Choose:-</span>
-                                        <select className='w-1/2'
-                                        defaultValue={"young"}
+                                        <select className='w-1/2 flex-1'
+                                        defaultValue={"#"}
                                         {...register("age",{required:"This is required"})}>
                                             <option value="#">Age</option>
                                             <option value="young">Young</option>
