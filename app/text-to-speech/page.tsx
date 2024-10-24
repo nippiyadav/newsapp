@@ -70,7 +70,6 @@ function TEXT_TO_SPEEACH() {
 
   // const watching = watch();
   // console.log(watching.voiceId);
-  
 
 console.log(voices);
 

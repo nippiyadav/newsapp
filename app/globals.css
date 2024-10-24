@@ -17,5 +17,7 @@
         background: #b8b7b7; /* Color of the track */
         width: 8px;
       }
-    
+    .chooseStyle{
+        @apply bg-gray-400 px-7 py-3
+    }
 }
